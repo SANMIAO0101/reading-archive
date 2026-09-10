@@ -65,7 +65,3 @@ update profiles set role='admin' where id='你的 auth user uuid';
 ## 7. 数据删除
 
 普通数据删除会通过 RLS 限制在当前用户自己的记录。上传文档删除时，客户端同时删除 Private Storage 原文件；数据库上的 document_chunks / document_reports / analysis_jobs 会因 `on delete cascade` 一并清理。
-
-## 8. Vercel 2.2 部署修复
-
-本版本将静态文件放入 `public/`，并在 `vercel.json` 明确设置 `outputDirectory: public`。这与 Vercel 项目当前的 Output Directory 设置一致，解决 `No Output Directory named "public" found`。

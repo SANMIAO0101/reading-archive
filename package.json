@@ -1,20 +1,14 @@
 {
   "name": "reading-archive-personal-writing-lab",
-  "version": "2.2.0",
+  "version": "2.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "vercel dev",
-    "build": "node scripts/build-check.mjs",
-    "start": "vercel dev"
+    "build": "echo static-ok"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
     "formidable": "^3.5.4",
     "jszip": "^3.10.1",
     "mammoth": "^1.8.0"
-  },
-  "devDependencies": {
-    "vercel": "^48.10.0"
   }
 }

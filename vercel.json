@@ -1,14 +1,16 @@
 {
   "version": 2,
-  "outputDirectory": "public",
   "functions": {
-    "api/analyze-work.js": {"maxDuration": 300},
-    "api/create-analysis-job.js": {"maxDuration": 300},
-    "api/process-analysis-job.js": {"maxDuration": 300},
-    "api/create-invite.js": {"maxDuration": 30},
-    "api/redeem-invite.js": {"maxDuration": 30}
+    "api/analyze-work.js": { "maxDuration": 60 },
+    "api/create-analysis-job.js": { "maxDuration": 60 },
+    "api/process-analysis-job.js": { "maxDuration": 60 },
+    "api/create-invite.js": { "maxDuration": 30 },
+    "api/redeem-invite.js": { "maxDuration": 30 }
   },
   "headers": [
-    {"source":"/api/(.*)","headers":[{"key":"Cache-Control","value":"no-store"}]}
+    {
+      "source": "/api/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    }
   ]
 }
