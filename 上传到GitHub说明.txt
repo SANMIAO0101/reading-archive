@@ -1,0 +1,21 @@
+【本压缩包 = 可直接上传到 GitHub 的完整项目】
+
+包含文件：
+- index.html, app.js, styles.css, config.js
+- package.json, vercel.json
+- api/ 目录（全部接口）
+- README.md, supabase-schema.sql, .env.example, .gitignore
+
+不要上传：
+- 本说明可以上传也可以不上传
+- 不要创建或上传真正的 .env（密钥）
+
+【网页拖拽上传步骤】
+1. GitHub → New repository → 创建空仓库（不要勾选 README）
+2. 打开仓库页 → uploading an existing file
+3. 解压本 zip 后，把里面的【所有文件和 api 文件夹】拖进页面
+4. Commit changes
+5. 打开 vercel.com → Import 该仓库 → Deploy
+6. 用手机打开生成的 https://xxx.vercel.app
+
+注意：拖到 GitHub 时，index.html 应在仓库根目录，不要多套一层文件夹。
