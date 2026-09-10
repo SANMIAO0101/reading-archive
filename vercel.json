@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "outputDirectory": ".",
   "functions": {
     "api/analyze-work.js": { "maxDuration": 60 },
     "api/create-analysis-job.js": { "maxDuration": 60 },
