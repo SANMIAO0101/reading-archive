@@ -1,67 +1,73 @@
-# Reading Archive · Personal Writing Lab — Production Build
+# Reading Archive · Personal Writing Lab v3.0
 
-## 1. 这版修复了什么
+v3.0 是 v2.x 的生产升级包，保留原有编辑式 Archive UI，同时重点处理安全、真实章节/卷分析、原创能力评分、队列与长期备份。
 
-- 修复主内容被左侧固定栏遮挡/横向溢出的布局问题：主栏宽度、page-head grid、overflow-x 均重新处理。
-- 首页五个“我的写作档案”数据全部是真正按钮：阅读记录、摘抄片段、写作练习、完成练习、我的作品。
-- 成长档案三个数据卡片可跳转。
-- 能力变化每一条都是可点击历史档案；掌握度统一使用 0–5 实体星星。
-- 文笔技巧库每个技巧都能进入训练历史。
-- 仿写练习支持进入、编辑、删除、AI 点评。
-- 原创作品支持编辑、删除、保存、AI 分析。
-- 上传作品支持 TXT / DOCX / EPUB；页面不展开正文。
-- 上传文档支持编辑分析重点、重新分析、查看完整报告、删除。
-- 设置里的“AI 教练”是有效卡片，并能直接跳转“已上传文档”。
-- 上传作品的 AI 流程按“切块 → 片段事实 → 人物/关系 → 剧情 → 伏笔 → 悬念 → 钩子 → 技法 → 总编 → 完整报告”设计。
-- 分析报告支持章节级 / 卷级 / 全书级三个层次。
+## 已升级
 
-## 2. Demo 与 Cloud
+- **P0 权限修复**：普通成员不能把自己的 `profiles.role` 改成 admin；浏览器同步 profile 时不再写 role。
+- **邀请码并发安全**：`claim_invitation()` 使用数据库行锁，避免同一邀请码被同时兑换。
+- **移除旧未授权 AI 入口**：v3 不再包含旧 `/api/analyze-work.js`。
+- **TXT / DOCX / EPUB 章节识别**：TXT/DOCX 使用章节标题识别；EPUB 使用 OPF spine 保留章节文件边界。
+- **三级故事分析**：chunk 事实 → 章节报告 → 卷报告（每 10 章）→ 全书总编报告。
+- **原创作品 AI 评分**：10 项能力 0–5 分写入 `training_records`，并滚动更新 `skill_profiles`。
+- **后台队列**：保留浏览器轮询，同时提供 Vercel Cron `/api/process-analysis-queue`，浏览器关闭后可继续推进。
+- **私有原稿**：上传文件由服务端进入 Supabase Private Storage；页面不展示原文。
+- **AI Provider**：OpenAI-compatible、OpenAI、Gemini、Grok/xAI；密钥仅服务端环境变量。
+- **生产默认非 Demo**：`public/config.js` 默认 `demoMode:false`。
+- **备份**：设置页增加个人档案 JSON 导出。
 
-默认 `config.js` 为 Demo 模式，数据保存在浏览器 localStorage，方便直接打开测试 UI。
+## 部署
 
-正式使用：
+### A. 新建 Supabase 项目
+执行 `supabase-schema.sql`。
 
-1. 创建 Supabase 项目。
-2. 执行 `supabase-schema.sql`。
-3. 在 Storage 创建 PRIVATE bucket：`private-manuscripts`。
-4. 配置 Storage policies，只允许用户访问自己的 UUID 文件夹。
-5. 填写 `config.js`：`supabaseUrl`、`supabaseAnonKey`、`demoMode:false`。
-6. 关闭 Supabase 公共注册；账号只由管理员邀请。
-7. 第一个管理员在 `profiles.role` 设为 `admin`。
+### B. 已有 v2.x 数据库
+执行 `supabase-v3-migration.sql`，再部署 v3。
 
-## 3. AI
-
-AI 密钥绝不能写入 `app.js`、`config.js` 或 GitHub。
-
-生产环境应只放在 Vercel Environment Variables：
-
-- `AI_API_KEY`
-- `AI_API_URL`（可选）
-- `AI_MODEL`
-- 以及备用 provider keys
-
-## 4. 长篇作品分析
-
-生产推荐任务结构：
-
-上传 → Private Storage → writing_documents → document_chunks → analysis_jobs → 章节级报告 → 卷级报告 → 全书报告。
-
-前端只轮询任务状态，不等待整本小说一次请求完成。这样几十万字作品可以分批处理，失败可以从某个 chunk 继续，而不需要重新上传。
-
-## 5. 注意
-
-当前压缩包包含完整 UI、Demo 数据、生产数据库蓝图和 AI API 原型。真正 Cloud 模式必须完成 Supabase 配置后才能跨设备保存数据；没有真实项目密钥时不能声称已经连接到云数据库。
-
-## 6. 第一个开发者管理员
-
-首次建立项目后，先创建你自己的 Supabase Auth 用户，然后在 SQL Editor 执行：
+### C. Auth
+关闭公开注册。账号只能由管理员通过邀请码创建。第一个管理员由项目拥有者设置：
 
 ```sql
-update profiles set role='admin' where id='你的 auth user uuid';
+update profiles set role='admin' where id='管理员用户UUID';
 ```
 
-之后进入网站“设置 → 开发者邀请”，邀请码由 `/api/create-invite` 服务端生成，不能靠修改浏览器 localStorage 绕过。
+### D. Vercel 环境变量
 
-## 7. 数据删除
+必填：
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `AI_API_KEY` + `AI_API_URL` + `AI_MODEL`（或直接配置 OPENAI/GEMINI/XAI）
+- `CRON_SECRET`
 
-普通数据删除会通过 RLS 限制在当前用户自己的记录。上传文档删除时，客户端同时删除 Private Storage 原文件；数据库上的 document_chunks / document_reports / analysis_jobs 会因 `on delete cascade` 一并清理。
+可选：`OPENAI_API_KEY`、`GEMINI_API_KEY`、`XAI_API_KEY`、`AI_JOB_BATCH`、`AI_CHUNK_MAX_CHARS`。
+
+**绝对不要**把 service role key / AI key 写进前端、GitHub 或 `config.js`。
+
+### E. 前端配置
+编辑 `public/config.js`：
+
+```js
+window.RA_CONFIG = {
+  supabaseUrl: 'https://你的项目.supabase.co',
+  supabaseAnonKey: '你的 anon/publishable key',
+  demoMode: false,
+  appVersion: '3.0.0'
+};
+```
+
+### F. Vercel
+Build Command：`npm run build`。输出目录已固定为 `public`，解决之前的 `No Output Directory named "public"` 问题。
+
+## AI 长篇分析
+
+建议 `AI_JOB_BATCH=2~3`。每次任务只处理有限 chunk，避免单次函数超时。Vercel Cron 每 5 分钟尝试处理一个任务；用户打开网页时也会继续轮询。
+
+如果作品达到几十万字甚至百万字，建议后续把任务层升级到专用 Workflow/Queue，并在分析完成后清理 `document_chunks.analysis.raw_chunk`，避免数据库膨胀。
+
+## 长期数据安全
+
+- GitHub 仓库建议设为 Private。
+- Supabase Storage 必须保持 `private-manuscripts` 为 Private。
+- 定期使用设置页导出 JSON，并另外备份 Supabase 数据库与 Storage。
+- 为 AI provider 设置费用/额度告警。
+- 不要在 localStorage 中保存生产密码、AI Key 或 service role key。

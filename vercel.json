@@ -1,17 +1,1 @@
-{
-  "version": 2,
-  "outputDirectory": ".",
-  "functions": {
-    "api/analyze-work.js": { "maxDuration": 60 },
-    "api/create-analysis-job.js": { "maxDuration": 60 },
-    "api/process-analysis-job.js": { "maxDuration": 60 },
-    "api/create-invite.js": { "maxDuration": 30 },
-    "api/redeem-invite.js": { "maxDuration": 30 }
-  },
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
-    }
-  ]
-}
+{"version":2,"outputDirectory":"public","functions":{"api/*.js":{"maxDuration":300}},"crons":[{"path":"/api/process-analysis-queue","schedule":"*/5 * * * *"}],"headers":[{"source":"/api/(.*)","headers":[{"key":"Cache-Control","value":"no-store"}]},{"source":"/(.*)","headers":[{"key":"X-Content-Type-Options","value":"nosniff"},{"key":"Referrer-Policy","value":"same-origin"},{"key":"X-Frame-Options","value":"DENY"}]}]}
