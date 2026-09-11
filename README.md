@@ -1,6 +1,6 @@
-# Reading Archive · Personal Writing Lab v3.0
+# Reading Archive · Personal Writing Lab v3.0.1
 
-v3.0 是 v2.x 的生产升级包，保留原有编辑式 Archive UI，同时重点处理安全、真实章节/卷分析、原创能力评分、队列与长期备份。
+v3.0.1 是 v2.x 的生产升级包，保留原有编辑式 Archive UI，同时重点处理安全、真实章节/卷分析、原创能力评分、队列与长期备份。
 
 ## 已升级
 

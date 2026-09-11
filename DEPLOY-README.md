@@ -1,4 +1,4 @@
-# Reading Archive v3.0 · Vercel + Supabase 部署
+# Reading Archive v3.0.1 · Vercel + Supabase 部署
 
 ## 1. Supabase
 

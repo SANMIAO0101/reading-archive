@@ -1,4 +1,4 @@
-# v3.0 生产部署清单
+# v3.0.1 生产部署清单
 
 1. Supabase 执行 `supabase-schema.sql`。
 2. Authentication 关闭公开注册。
